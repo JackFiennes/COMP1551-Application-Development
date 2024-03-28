@@ -1,0 +1,129 @@
+class Program
+{
+    static void Main(string[] args)
+    {
+        while (true)
+        {
+            Console.WriteLine("Welcome to the Geography Quiz!");
+            Console.WriteLine("Please select a mode:");
+            Console.WriteLine("1. Play");
+            Console.WriteLine("2. Create");
+
+            int mode;
+            while (!int.TryParse(Console.ReadLine(), out mode) || mode < 1 || mode > 2)
+            {
+                Console.WriteLine("Invalid selection. Please try again.");
+            }
+
+            if (mode == 1)
+            {
+                PlayQuiz();
+            }
+            else
+            {
+                CreateMode();
+            }
+        }
+    }
+
+    public class Question
+    {
+        public string Text { get; set; }
+        public string Answer { get; set; }
+    }
+
+    static List<Question> questionList = new List<Question>(); // Initialize an empty list
+
+    public static void PlayQuiz()
+    {
+        if (questionList.Count == 0)
+        {
+            Console.WriteLine("There are no questions in the list. Please create some questions first.");
+            return;
+        }
+
+        int score = 0;
+        int questionIndex = 0;
+
+        while (questionIndex < questionList.Count)
+        {
+            Question currentQuestion = questionList[questionIndex];
+            Console.WriteLine(currentQuestion.Text);
+            string userAnswer = Console.ReadLine();
+
+            if (userAnswer.ToLower() == currentQuestion.Answer.ToLower())
+            {
+                Console.WriteLine("Correct!");
+                score++;
+            }
+            else
+            {
+                Console.WriteLine("Incorrect. The answer is: " + currentQuestion.Answer);
+            }
+
+            questionIndex++;
+        }
+
+        Console.WriteLine("You answered " + score + " out of " + questionList.Count + " questions correctly.");
+    }
+
+    // Assuming CreateMode() already exists to create questions and add them to questionList
+
+
+    static void CreateMode()
+    {
+        List<(string question, string answer)> questions = new List<(string, string)>();
+
+        while (true)
+        {
+            Console.WriteLine("Enter your question (or type 'stop' to quit):");
+            string input = Console.ReadLine();
+            if (input.ToLower() == "stop")
+            {
+                break;
+            }
+
+            Console.WriteLine("What type of question is it? (open/multiple/true/false):");
+            string type = Console.ReadLine().ToLower();
+
+            string answer = "";
+            switch (type)
+            {
+                case "open":
+                    Console.WriteLine("Enter the answer:");
+                    answer = Console.ReadLine();
+                    break;
+                case "multiple":
+                    Console.WriteLine("Enter the choices, separated by commas:");
+                    string choices = Console.ReadLine();
+                    // split the choices string into an array
+                    string[] choicesArray = choices.Split(',');
+                    // prompt the user to enter the correct answer
+                    Console.WriteLine("Enter the correct choice (case-sensitive):");
+                    string correctChoice = Console.ReadLine();
+                    // check if the correct choice is valid
+                    if (int.TryParse(correctChoice, out int correctChoiceIndex) && correctChoiceIndex >= 0 && correctChoiceIndex < choicesArray.Length)
+                    {
+                        // set the answer to the selected choice
+                        answer = choicesArray[correctChoiceIndex];
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid choice index. Please choose a number between 0 and " + (choicesArray.Length - 1) + ".");
+                        return;
+                    }
+                    break;
+                case "true":
+                    answer = "True";
+                    break;
+                case "false":
+                    answer = "False";
+                    break;
+                default:
+                    Console.WriteLine("Invalid question type.");
+                    return;
+            }
+
+            // add the question and answer to the list
+            questions.Add((input, answer));
+        }
