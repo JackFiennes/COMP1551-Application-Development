@@ -1,3 +1,5 @@
+using system.Diagnostics;
+
 class Program
 {
     static void Main(string[] args)
